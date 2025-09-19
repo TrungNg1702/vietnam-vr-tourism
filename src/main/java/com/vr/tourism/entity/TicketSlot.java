@@ -13,6 +13,8 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TicketSlot {
     @Id

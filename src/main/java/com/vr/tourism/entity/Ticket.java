@@ -12,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Ticket {
     @Id

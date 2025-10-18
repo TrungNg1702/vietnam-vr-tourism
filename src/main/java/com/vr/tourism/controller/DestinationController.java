@@ -4,6 +4,7 @@ import com.vr.tourism.entity.Destination;
 import com.vr.tourism.repository.TagRepository;
 import com.vr.tourism.service.DestinationService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,9 @@ public class DestinationController {
 
     @GetMapping("/{id}")
     public Destination getById(@PathVariable String id) { return service.getById(id); }
+
+    @PostMapping
+    public Destination create(@RequestBody Destination dest) { return service.save(dest); }
 
     @GetMapping("/city/{city}")
     public List<Destination> getByCity(@PathVariable String city) { return service.getByCity(city); }

@@ -1,16 +1,20 @@
-package com.vr.tourism.security;
+package com.vr.tourism.service;
 
-import org.springframework.security.core.userdetails.User;
 import com.vr.tourism.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.List;
+
+@AllArgsConstructor
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository repo;
-
-    public CustomUserDetailsService(UserRepository repo) { this.repo = repo; }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -19,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(u.getUsername())
                 .password(u.getPassword())
-                .roles(u.getRole())
+                .roles(u.getRole().name())
                 .build();
     }
 

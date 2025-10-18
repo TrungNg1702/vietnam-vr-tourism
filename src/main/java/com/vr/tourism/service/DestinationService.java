@@ -28,6 +28,9 @@ public class DestinationService {
     public List<Destination> search(String name) {
         return repo.findByNameContainingIgnoreCaseOrCityContainingIgnoreCase(name,name);
     }
+    public Destination save(Destination d) {
+        return repo.save(d);
+    }
     public List<String> getCities() {
         return repo.findAll().stream().map(Destination::getCity).distinct().toList();
     }

@@ -2,6 +2,7 @@ package com.vr.tourism.service;
 
 
 import com.vr.tourism.dto.*;
+import com.vr.tourism.entity.Role;
 import com.vr.tourism.entity.User;
 import com.vr.tourism.repository.UserRepository;
 import com.vr.tourism.security.JwtService;
@@ -25,14 +26,16 @@ public class AuthService {
         if (req.getEmail() != null && userRepo.existsByEmail(req.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
+        Role role = userRepo.count() == 0 ? Role.ADMIN : Role.USER;
+
         User u = User.builder()
                 .username(req.getUsername())
                 .password(passwordEncoder.encode(req.getPassword()))
                 .email(req.getEmail())
-                .role("USER")
+                .role(role)
                 .build();
         userRepo.save(u);
-        String token = jwtService.generateToken(u.getUsername(), u.getRole());
+        String token = jwtService.generateToken(u.getUsername(), u.getRole().name());
         return new AuthResponse(token, "Bearer", Long.parseLong(System.getProperty("jwt.expiration-minutes", "60")));
     }
 
@@ -41,7 +44,7 @@ public class AuthService {
         var authToken = new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword());
         authManager.authenticate(authToken); // will throw if bad creds
         User u = userRepo.findByUsername(req.getUsername()).orElseThrow();
-        String token = jwtService.generateToken(u.getUsername(), u.getRole());
+        String token = jwtService.generateToken(u.getUsername(), u.getRole().name());
         return new AuthResponse(token, "Bearer", Long.parseLong(System.getProperty("jwt.expiration-minutes", "60")));
     }
 }

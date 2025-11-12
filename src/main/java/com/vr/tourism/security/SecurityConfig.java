@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // Public routes
-                        .requestMatchers("/api/auth/**", "/pano/**", "/api/public/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/pano/**", "/api/public/**", "/api/destinations/getAll").permitAll()
 
                         // User & Admin can view (GET)
                         .requestMatchers(HttpMethod.GET, "/api/destinations/**").hasAnyRole("USER", "ADMIN")

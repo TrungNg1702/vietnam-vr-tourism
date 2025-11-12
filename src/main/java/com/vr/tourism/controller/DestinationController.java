@@ -18,7 +18,7 @@ public class DestinationController {
     private final DestinationService service;
     private final TagRepository tagRepo;
 
-    @GetMapping
+    @GetMapping("/getAll")
     public List<Destination> getAll() { return service.getAll(); }
 
     @GetMapping("/{id}")

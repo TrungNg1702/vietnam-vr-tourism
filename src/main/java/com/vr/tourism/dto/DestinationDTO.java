@@ -1,6 +1,13 @@
 package com.vr.tourism.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
+@Data  // Lombok annotation để tạo getter/setter
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class DestinationDTO {
     private String id;

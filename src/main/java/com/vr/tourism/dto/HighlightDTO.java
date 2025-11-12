@@ -1,5 +1,12 @@
 package com.vr.tourism.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data  // Lombok annotation để tạo getter/setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class HighlightDTO {
     private Long id;
     private String highlight;

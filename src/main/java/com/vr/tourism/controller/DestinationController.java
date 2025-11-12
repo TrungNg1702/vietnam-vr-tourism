@@ -1,10 +1,11 @@
 package com.vr.tourism.controller;
 
-import com.vr.tourism.entity.Destination;
+import com.vr.tourism.dto.DestinationDTO;
 import com.vr.tourism.repository.TagRepository;
 import com.vr.tourism.service.DestinationService;
-import lombok.AllArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,35 +13,62 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/destinations")
 @CrossOrigin(origins = "*")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DestinationController {
 
     private final DestinationService service;
     private final TagRepository tagRepo;
 
     @GetMapping("/getAll")
-    public List<Destination> getAll() { return service.getAll(); }
+    public ResponseEntity<?> getAll() {
+        try {
+            List<DestinationDTO> destinations = service.getAll();
+            return ResponseEntity.ok(destinations);
+        } catch (Exception e) {
+            e.printStackTrace(); // For debugging
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error: " + e.getMessage());
+        }
+    }
+
 
     @GetMapping("/{id}")
-    public Destination getById(@PathVariable String id) { return service.getById(id); }
+    public DestinationDTO getById(@PathVariable String id) {
+        return service.getById(id);
+    }
 
     @PostMapping
-    public Destination create(@RequestBody Destination dest) { return service.save(dest); }
+    public DestinationDTO create(@RequestBody DestinationDTO dto) {
+        return service.save(dto);
+    }
 
     @GetMapping("/city/{city}")
-    public List<Destination> getByCity(@PathVariable String city) { return service.getByCity(city); }
+    public List<DestinationDTO> getByCity(@PathVariable String city) {
+        return service.getByCity(city);
+    }
 
     @GetMapping("/with360")
-    public List<Destination> getWith360() { return service.getWith360(); }
+    public List<DestinationDTO> getWith360() {
+        return service.getWith360();
+    }
 
     @GetMapping("/search")
-    public List<Destination> search(@RequestParam("name") String name) { return service.search(name); }
+    public List<DestinationDTO> search(@RequestParam("name") String name) {
+        return service.search(name);
+    }
 
     @GetMapping("/cities")
-    public List<String> getCities() { return service.getCities(); }
+    public List<String> getCities() {
+        return service.getCities();
+    }
 
     @GetMapping("/tags")
     public List<String> getTags() {
-        return tagRepo.findAll().stream().map(t -> t.getTag()).distinct().toList();
+        return tagRepo.findAll()
+                .stream()
+                .map(t -> t.getTag())
+                .distinct()
+                .toList();
     }
 }

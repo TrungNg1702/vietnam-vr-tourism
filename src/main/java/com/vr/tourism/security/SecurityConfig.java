@@ -42,23 +42,23 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Public routes
-                        .requestMatchers("/api/auth/**", "/pano/**", "/api/public/**", "/api/destinations/getAll").permitAll()
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/pano/**",
+                                "/api/public/**",
+                                "/api/destinations/**"
+                        ).permitAll()
 
-                        // User & Admin can view (GET)
-                        .requestMatchers(HttpMethod.GET, "/api/destinations/**").hasAnyRole("USER", "ADMIN")
-
-                        // Only ADMIN can create, update, delete
+                        // Only admin can modify destinations
                         .requestMatchers(HttpMethod.POST, "/api/destinations/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/destinations/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/destinations/**").hasRole("ADMIN")
 
-                        // Admin routes
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // Anything else requires authentication
                         .anyRequest().authenticated()
                 )
+
                 .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

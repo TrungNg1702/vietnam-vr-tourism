@@ -34,4 +34,5 @@ public class DestinationService {
     public List<String> getCities() {
         return repo.findAll().stream().map(Destination::getCity).distinct().toList();
     }
+
 }

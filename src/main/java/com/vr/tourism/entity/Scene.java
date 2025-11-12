@@ -23,7 +23,7 @@ public class Scene {
     @Column(name = "pano_url")
     private String panoUrl;
     private String title;
-
+    private String description;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "destination_id")
     @JsonIgnoreProperties({"scenes","tickets"})

@@ -32,6 +32,18 @@ public class DestinationController {
         }
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateDestination(@RequestBody DestinationDTO dto,
+                                               @PathVariable Long id) {
+        try{
+            DestinationDTO destinationDTO = service.update(dto, id);
+            return ResponseEntity.ok(destinationDTO);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
     @GetMapping("/getAll")
     public ResponseEntity<?> getAll() {
         try {
@@ -49,11 +61,6 @@ public class DestinationController {
     @GetMapping("/{id}")
     public DestinationDTO getById(@PathVariable Long id) {
         return service.getById(id);
-    }
-
-    @PostMapping
-    public DestinationDTO create(@RequestBody DestinationDTO dto) {
-        return service.save(dto);
     }
 
     @GetMapping("/city/{city}")

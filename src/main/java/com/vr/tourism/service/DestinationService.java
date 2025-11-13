@@ -5,6 +5,7 @@ import com.vr.tourism.entity.Destination;
 import com.vr.tourism.mapper.DestinationMapper;
 import com.vr.tourism.repository.DestinationRepository;
 import lombok.AllArgsConstructor;
+import org.hibernate.exception.DataException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,6 +57,20 @@ public class DestinationService {
             throw new IllegalArgumentException("Destination already exists");
         }
         Destination destination = mapper.toEntity(dto);
+        Destination saved = repo.save(destination);
+        return mapper.toDTO(saved);
+    }
+
+    public DestinationDTO update(DestinationDTO dto, Long id) {
+        if (dto == null) {
+            throw new IllegalArgumentException("DestinationDTO không được phép null");
+        }
+
+        Destination existingDestination = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Khong tim thay Destination co ID: " + dto.getId()));
+        Destination destination = mapper.toEntity(dto);
+        destination.setId(existingDestination.getId());
+
         Destination saved = repo.save(destination);
         return mapper.toDTO(saved);
     }

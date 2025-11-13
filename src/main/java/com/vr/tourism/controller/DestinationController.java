@@ -1,6 +1,7 @@
 package com.vr.tourism.controller;
 
 import com.vr.tourism.dto.DestinationDTO;
+import com.vr.tourism.entity.Tag;
 import com.vr.tourism.repository.TagRepository;
 import com.vr.tourism.service.DestinationService;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +16,21 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class DestinationController {
-
     private final DestinationService service;
     private final TagRepository tagRepo;
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createDestination(@RequestBody DestinationDTO dto) {
+        try{
+            DestinationDTO destinationDTO = service.create(dto);
+            return ResponseEntity.ok(destinationDTO);
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
 
     @GetMapping("/getAll")
     public ResponseEntity<?> getAll() {
@@ -25,7 +38,7 @@ public class DestinationController {
             List<DestinationDTO> destinations = service.getAll();
             return ResponseEntity.ok(destinations);
         } catch (Exception e) {
-            e.printStackTrace(); // For debugging
+            e.printStackTrace(); //debugging
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error: " + e.getMessage());
@@ -34,7 +47,7 @@ public class DestinationController {
 
 
     @GetMapping("/{id}")
-    public DestinationDTO getById(@PathVariable String id) {
+    public DestinationDTO getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
@@ -67,7 +80,7 @@ public class DestinationController {
     public List<String> getTags() {
         return tagRepo.findAll()
                 .stream()
-                .map(t -> t.getTag())
+                .map(Tag::getTag)
                 .distinct()
                 .toList();
     }

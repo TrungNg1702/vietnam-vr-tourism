@@ -19,7 +19,7 @@ public class DestinationService {
         return repo.findAll().stream().map(mapper::toDTO).toList();
     }
 
-    public DestinationDTO getById(String id) {
+    public DestinationDTO getById(Long id) {
         return repo.findById(id).map(mapper::toDTO).orElse(null);
     }
 
@@ -48,4 +48,15 @@ public class DestinationService {
                 .toList();
     }
 
+    public DestinationDTO create(DestinationDTO dto) {
+        if (dto == null && repo.existsById(dto.getId())){
+            throw new IllegalArgumentException("Destination already exists");
+        }
+        if (repo.existsByName(dto.getName())){
+            throw new IllegalArgumentException("Destination already exists");
+        }
+        Destination destination = mapper.toEntity(dto);
+        Destination saved = repo.save(destination);
+        return mapper.toDTO(saved);
+    }
 }

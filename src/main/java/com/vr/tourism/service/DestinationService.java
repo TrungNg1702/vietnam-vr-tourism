@@ -7,7 +7,13 @@ import com.vr.tourism.repository.DestinationRepository;
 import lombok.AllArgsConstructor;
 import org.hibernate.exception.DataException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Service
@@ -50,7 +56,7 @@ public class DestinationService {
     }
 
     public DestinationDTO create(DestinationDTO dto) {
-        if (dto == null || repo.existsById(dto.getId())){
+        if (dto == null && repo.existsById(dto.getId())){
             throw new IllegalArgumentException("Destination already exists");
         }
         if (repo.existsByName(dto.getName())){
@@ -80,5 +86,48 @@ public class DestinationService {
                 .orElseThrow(() -> new IllegalArgumentException("Khong tim thay Destination co ID: " + id));
         repo.delete(destination);
         return mapper.toDTO(destination);
+    }
+
+    public DestinationDTO uploadCoverImage(Long id, MultipartFile file) throws IOException {
+        if(file.isEmpty()){
+            throw new IllegalArgumentException("File cannot be  empty");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")){
+            throw new IllegalArgumentException("File must be an image");
+        }
+
+        Destination existingDestination = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Khong tim thay Destination co ID: " + id));
+
+        // tao file neu khong co
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+        // duong dan de luu file
+        String uploadDir = "uploads/destinations/covers";
+        Path uploadPath = Paths.get(uploadDir);
+
+        // tao thu muc anh neu chua ton tai
+        if (!Files.exists(uploadPath)){
+            Files.createDirectories(uploadPath);
+        }
+
+        // Neu co anh cu, xoa
+        if (existingDestination.getCover() != null){
+            Path oldPath = Paths.get(existingDestination.getCover());
+            Files.deleteIfExists(oldPath);
+        }
+
+        // Luu moi
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        // cap nhat duong dan vao db
+        existingDestination.setCover(filePath.toString());
+        Destination saved = repo.save(existingDestination);
+
+        return mapper.toDTO(saved);
+
     }
 }

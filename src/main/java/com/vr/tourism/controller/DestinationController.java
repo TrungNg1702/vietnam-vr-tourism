@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,6 +26,19 @@ public class DestinationController {
             DestinationDTO destinationDTO = service.create(dto);
             return ResponseEntity.ok(destinationDTO);
         } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/upload-cover/{id}")
+    public ResponseEntity<?> uploadCoverImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        try {
+            DestinationDTO destinationDTO = service.uploadCoverImage(id, file);
+            return ResponseEntity.ok(destinationDTO);
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

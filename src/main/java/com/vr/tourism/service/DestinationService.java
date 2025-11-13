@@ -50,7 +50,7 @@ public class DestinationService {
     }
 
     public DestinationDTO create(DestinationDTO dto) {
-        if (dto == null && repo.existsById(dto.getId())){
+        if (dto == null || repo.existsById(dto.getId())){
             throw new IllegalArgumentException("Destination already exists");
         }
         if (repo.existsByName(dto.getName())){
@@ -73,5 +73,12 @@ public class DestinationService {
 
         Destination saved = repo.save(destination);
         return mapper.toDTO(saved);
+    }
+
+    public DestinationDTO delete(Long id) {
+        Destination destination = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Khong tim thay Destination co ID: " + id));
+        repo.delete(destination);
+        return mapper.toDTO(destination);
     }
 }

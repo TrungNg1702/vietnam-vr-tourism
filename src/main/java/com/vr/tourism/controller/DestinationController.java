@@ -91,4 +91,16 @@ public class DestinationController {
                 .distinct()
                 .toList();
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            DestinationDTO destinationDTO = service.delete(id);
+            return ResponseEntity.ok("xóa thành công Destination có ID: " + destinationDTO.getId() );
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
 }

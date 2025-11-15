@@ -17,6 +17,6 @@ public class SceneDTO {
     private String title;
     private String description;
 
-    private String destinationId;
+    private Long destinationId;
     private List<HotspotDTO> hotspots;
 }

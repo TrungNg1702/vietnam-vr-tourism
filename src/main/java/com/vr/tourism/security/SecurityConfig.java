@@ -46,12 +46,15 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/pano/**",
                                 "/api/public/**",
-                                "/api/destinations/**"
+                                "/api/destinations/**",
+                                "/api/scene/**"
                         ).permitAll()
 
                         // Only admin can modify destinations
                         .requestMatchers(HttpMethod.POST, "/api/destinations/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.POST, "/api/scene/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/destinations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/scene/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/destinations/**").hasRole("ADMIN")
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

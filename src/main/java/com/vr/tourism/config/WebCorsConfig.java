@@ -20,4 +20,10 @@ public class WebCorsConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowCredentials(false);
     }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Map URL /uploads/** tới thư mục uploads trên server
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:uploads/");
+    }
 }

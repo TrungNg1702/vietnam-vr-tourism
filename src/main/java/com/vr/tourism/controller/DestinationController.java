@@ -1,15 +1,21 @@
 package com.vr.tourism.controller;
 
 import com.vr.tourism.dto.DestinationDTO;
+import com.vr.tourism.entity.Destination;
 import com.vr.tourism.entity.Tag;
 import com.vr.tourism.repository.TagRepository;
 import com.vr.tourism.service.DestinationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -19,6 +25,7 @@ import java.util.List;
 public class DestinationController {
     private final DestinationService service;
     private final TagRepository tagRepo;
+    private final com.vr.tourism.repository.DestinationRepository repo;
 
     @PostMapping("/create")
     public ResponseEntity<?> createDestination(@RequestBody DestinationDTO dto) {
@@ -105,6 +112,21 @@ public class DestinationController {
                 .distinct()
                 .toList();
     }
+
+    @GetMapping("/getCoverBytes/{id}")
+    public ResponseEntity<byte[]> getCoverBytes(@PathVariable Long id) throws IOException {
+        Destination destination = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Destination với ID: " + id));
+
+        Path filePath = Paths.get(destination.getCover());
+        byte[] bytes = Files.readAllBytes(filePath);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, "image/webp")
+                .body(bytes);
+    }
+
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {

@@ -89,45 +89,62 @@ public class DestinationService {
     }
 
     public DestinationDTO uploadCoverImage(Long id, MultipartFile file) throws IOException {
-        if(file.isEmpty()){
-            throw new IllegalArgumentException("File cannot be  empty");
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("File không được để trống");
         }
 
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")){
-            throw new IllegalArgumentException("File must be an image");
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("File phải là ảnh");
         }
 
         Destination existingDestination = repo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Khong tim thay Destination co ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Destination với ID: " + id));
 
-        // tao file neu khong co
+        // Tên file mới
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
-        // duong dan de luu file
+        // Thư mục lưu ảnh
         String uploadDir = "uploads/destinations/covers";
         Path uploadPath = Paths.get(uploadDir);
-
-        // tao thu muc anh neu chua ton tai
-        if (!Files.exists(uploadPath)){
+        if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        // Neu co anh cu, xoa
-        if (existingDestination.getCover() != null){
+        // Xóa ảnh cũ nếu có
+        if (existingDestination.getCover() != null) {
             Path oldPath = Paths.get(existingDestination.getCover());
             Files.deleteIfExists(oldPath);
         }
 
-        // Luu moi
+        // Lưu file mới
         Path filePath = uploadPath.resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // cap nhat duong dan vao db
+        // Lưu **đường dẫn file thực tế trên server** vào DB
         existingDestination.setCover(filePath.toString());
         Destination saved = repo.save(existingDestination);
 
         return mapper.toDTO(saved);
-
     }
+
+    // Trả về URL public để frontend hiển thị
+    public String getCoverImg(Long id) {
+        Destination destination = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Destination với ID: " + id));
+
+        String cover = destination.getCover();
+        if (cover == null || cover.isBlank()) {
+            throw new RuntimeException("Không có ảnh cho Destination với ID: " + id);
+        }
+
+        // Lấy tên file từ path
+        Path path = Paths.get(cover);
+        String fileName = path.getFileName().toString();
+
+        // Trả về URL public
+        return "/uploads/destinations/covers/" + fileName;
+    }
+
+
 }

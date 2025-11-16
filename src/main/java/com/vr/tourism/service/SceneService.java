@@ -8,6 +8,7 @@ import com.vr.tourism.mapper.SceneMapper;
 import com.vr.tourism.repository.DestinationRepository;
 import com.vr.tourism.repository.SceneRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -96,6 +97,7 @@ public class SceneService {
 
             // Tạo tên file mới luôn khác
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            fileName = fileName.replaceAll("\\s+", "_");
 
             // Thư mục lưu file
             String uploadDir = "uploads/scenes/pano";
@@ -133,21 +135,57 @@ public class SceneService {
         }
     }
 
-
-    public String getPanoImgUrl(String id) {
+    public ResponseEntity<byte[]> getPanoFile(String id) {
         Scene scene = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Scene với ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Scene not found"));
 
         String panoUrl = scene.getPanoUrl();
         if (panoUrl == null || panoUrl.isBlank()) {
-            throw new RuntimeException("Không có ảnh panorama cho Scene với ID: " + id);
+            throw new RuntimeException("Scene không có ảnh pano");
         }
 
         Path path = Paths.get(panoUrl);
-        String fileName = path.getFileName().toString();
-        return "/uploads/scenes/pano/" + fileName;
+        try {
+            byte[] bytes = Files.readAllBytes(path);
+            String contentType = Files.probeContentType(path);
+
+            return ResponseEntity.ok()
+                    .header("Content-Type", contentType)
+                    .body(bytes);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Không thể đọc file ảnh");
+        }
     }
 
 
+//    public String getPanoImgUrl(String id) {
+//        Scene scene = repo.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Không tìm thấy Scene với ID: " + id));
+//
+//        String panoUrl = scene.getPanoUrl();
+//        if (panoUrl == null || panoUrl.isBlank()) {
+//            throw new RuntimeException("Không có ảnh panorama cho Scene với ID: " + id);
+//        }
+//
+//        Path path = Paths.get(panoUrl);
+//        String fileName = path.getFileName().toString();
+//        return "/uploads/scenes/pano/" + fileName;
+//    }
+
+    public SceneDTO delete(String id) throws IOException {
+        Scene scene = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Khong tim thay Scene co ID: " + id));
+        if (scene.getHotspots() != null) {
+            scene.getHotspots().forEach(h -> h.setScene(null));
+            scene.setHotspots(null);
+        }
+        if (scene.getPanoUrl() != null) {
+            Files.deleteIfExists(Paths.get(scene.getPanoUrl()));
+        }
+
+        repo.delete(scene);
+        return mapper.toDTO(scene);
+    }
 
 }

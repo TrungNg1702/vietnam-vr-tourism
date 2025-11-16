@@ -5,6 +5,7 @@ import com.vr.tourism.entity.Scene;
 import com.vr.tourism.repository.SceneRepository;
 import com.vr.tourism.service.SceneService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,8 +54,14 @@ public class SceneController {
     }
 
     @GetMapping("/{id}")
-    public SceneDTO getById(@PathVariable("id") String id) {
-        return sceneService.getById(id);
+    public ResponseEntity<?> getById(@PathVariable("id") String id) {
+        try{
+            SceneDTO sceneDTO = sceneService.getById(id);
+            return ResponseEntity.ok(sceneDTO);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 
     @GetMapping
@@ -68,31 +75,26 @@ public class SceneController {
     }
 
     @GetMapping("/pano/{id}")
-    public ResponseEntity<byte[]> getPanoImg(@PathVariable String id) {
-        Scene scene = sceneRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Scene với ID: " + id));
-
-        String panoUrl = scene.getPanoUrl();
-        if (panoUrl == null || panoUrl.isBlank()) {
-            throw new RuntimeException("Scene chưa có ảnh panorama");
-        }
-
-        Path path = Paths.get(panoUrl);
-        try {
-            byte[] bytes = Files.readAllBytes(path);
-
-            // Lấy content type dựa vào phần mở rộng file
-            String contentType = Files.probeContentType(path);
-            return ResponseEntity.ok()
-                    .header("Content-Type", contentType != null ? contentType : "application/octet-stream")
-                    .body(bytes);
-        } catch (IOException e) {
-            throw new RuntimeException("Không thể đọc file: " + e.getMessage(), e);
+    public ResponseEntity<byte[]> getPanoFile(@PathVariable String id) {
+        try{
+            return sceneService.getPanoFile(id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
     }
 
 
-
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteScene (@PathVariable String id) {
+        try{
+            SceneDTO existingScene = sceneService.delete(id);
+            return ResponseEntity.ok("Xoa thanh cong Scene co ID: " + existingScene.getId());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
 
 
 }

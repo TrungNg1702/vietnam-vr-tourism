@@ -1,3 +1,4 @@
+
 package com.vr.tourism.config;
 
 import org.springframework.beans.factory.annotation.Value;

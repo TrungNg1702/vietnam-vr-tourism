@@ -9,20 +9,32 @@ public class WebCorsConfig implements WebMvcConfigurer {
 
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
+
     @Value("${cors.allowed-methods}")
     private String allowedMethods;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+
         registry.addMapping("/**")
+                // Nếu muốn đọc từ config file
                 .allowedOrigins(allowedOrigins.split(","))
+
+                // Thêm allowedOriginPatterns
+                .allowedOriginPatterns(
+                        "http://localhost:8085",
+                        "http://localhost:5173",
+                        "https://app.vietnam360.vn",
+                        "*"
+                )
+
                 .allowedMethods(allowedMethods.split(","))
                 .allowedHeaders("*")
                 .allowCredentials(false);
     }
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Map URL /uploads/** tới thư mục uploads trên server
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:uploads/");
     }

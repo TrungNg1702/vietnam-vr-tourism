@@ -31,6 +31,8 @@ public class UserService {
 
         UserDTO dto = mapper.toDTO(user);
 
+        dto.setPassword("*********");
+
         if (user.getAvatar() != null) {
             String fileName = Paths.get(user.getAvatar()).getFileName().toString();
             dto.setAvatar("/uploads/users/avatar/" + fileName);

@@ -63,6 +63,7 @@ public class AuthService {
                 .tokenType("Bearer")
                 .expiresInMinutes(Long.parseLong(System.getProperty("jwt.expiration-minutes", "60")))
                 .userID(u.getId())
+                .role(u.getRole().name())
                 .build();
     }
 

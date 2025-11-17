@@ -10,5 +10,5 @@ public class AuthResponse {
     private String tokenType = "Bearer";
     private Long expiresInMinutes;
     private Long userID;
-
+    private String role;
 }

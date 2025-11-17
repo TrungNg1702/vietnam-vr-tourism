@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "ticket_slots")
+@Table(name = "slots")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,13 +20,13 @@ public class TicketSlot {
     @Id
     private String id;
 
-    @Column(name = "slot_date")
+    @Column(name = "date")
     private LocalDate slotDate;
 
-    @Column(name = "start_time")
+    @Column(name = "start")
     private LocalTime startTime;
 
-    @Column(name = "end_time")
+    @Column(name = "end")
     private LocalTime endTime;
 
     private Integer capacity;

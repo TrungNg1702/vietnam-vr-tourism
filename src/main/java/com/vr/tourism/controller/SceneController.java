@@ -24,76 +24,50 @@ public class SceneController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createScene(@RequestBody SceneDTO dto) {
-        try{
             SceneDTO sceneDTO = sceneService.create(dto);
             return ResponseEntity.ok(sceneDTO);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
-        }
     }
 
     @PostMapping("/upload-pano/{id}")
     public ResponseEntity<?> uploadPanoImg(@PathVariable("id") String id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
-        try {
             SceneDTO sceneDTO = sceneService.uploadPanoImg(id, file);
             return ResponseEntity.ok(sceneDTO);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateScene(@RequestBody SceneDTO dto,
                                            @PathVariable("id") String id) {
-        try{
             SceneDTO sceneDTO = sceneService.update(dto, id);
             return ResponseEntity.ok(sceneDTO);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
-        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable("id") String id) {
-        try{
             SceneDTO sceneDTO = sceneService.getById(id);
             return ResponseEntity.ok(sceneDTO);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-
     }
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        try {
             List<SceneDTO> scenes = sceneService.getAll();
             return ResponseEntity.ok(scenes);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @GetMapping("/pano/{id}")
     public ResponseEntity<byte[]> getPanoFile(@PathVariable String id) {
-        try{
             return sceneService.getPanoFile(id);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
     }
 
+    @GetMapping("/getSceneByDestinationId/{id}")
+    public ResponseEntity<?> getSceneByDestinationId(@PathVariable Long id) {
+            List<SceneDTO> scenes = sceneService.getSceneByDestinationId(id);
+            return ResponseEntity.ok(scenes);
+    }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteScene (@PathVariable String id) {
-        try{
+    public ResponseEntity<?> deleteScene (@PathVariable String id) throws IOException {
             SceneDTO existingScene = sceneService.delete(id);
             return ResponseEntity.ok("Xoa thanh cong Scene co ID: " + existingScene.getId());
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
-        }
     }
 
 

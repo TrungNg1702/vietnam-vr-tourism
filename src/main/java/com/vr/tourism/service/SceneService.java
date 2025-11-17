@@ -71,11 +71,22 @@ public class SceneService {
         }
     }
 
-    public SceneDTO getById(String id) {
-        return repo.findById(id)
-                .map(mapper::toDTO)
-                .orElse(null);
+    public List<SceneDTO> getSceneByDestinationId(Long destinationId) {
+        Destination existingDestination = destinationRepository.findById(destinationId)
+                .orElseThrow(() -> new IllegalArgumentException("Destination not found"));
+
+        List<Scene> scenes = repo.findByDestinationId(existingDestination.getId());
+
+        return scenes.stream().map(mapper::toDTO).toList();
     }
+
+    public SceneDTO getById(String id) {
+        Scene scene = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Scene với ID: " + id));
+
+        return mapper.toDTO(scene);
+    }
+
 
     public List<SceneDTO> getAll() {
        return repo.findAll().stream().map(mapper::toDTO).toList();

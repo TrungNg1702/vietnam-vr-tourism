@@ -39,4 +39,12 @@ public class Destination {
     @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonIgnoreProperties({"destination"})
     private List<Ticket> tickets;
+
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonIgnoreProperties({"destination"})
+    private List<Highlight> highlights;
+
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonIgnoreProperties({"destination"})
+    private List<Tag> tags;
 }

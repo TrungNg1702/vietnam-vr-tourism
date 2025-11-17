@@ -29,8 +29,16 @@ public class UserService {
         User user = repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        return mapper.toDTO(user);
+        UserDTO dto = mapper.toDTO(user);
+
+        if (user.getAvatar() != null) {
+            String fileName = Paths.get(user.getAvatar()).getFileName().toString();
+            dto.setAvatar("/uploads/users/avatar/" + fileName);
+        }
+
+        return dto;
     }
+
 
     public UserDTO updateUser(Long id, UserUpdateDTO userDTO){
         User existingUser = repo.findById(id)

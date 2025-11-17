@@ -2,18 +2,9 @@ package com.vr.tourism.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-<<<<<<< HEAD
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.util.List;
-
-=======
 import lombok.*;
 
 import java.util.List;
->>>>>>> trung
 
 @Entity
 @Table(name = "scenes")

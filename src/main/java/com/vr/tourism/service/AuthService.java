@@ -26,6 +26,7 @@ public class AuthService {
         if (req.getEmail() != null && userRepo.existsByEmail(req.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
+
         Role role = userRepo.count() == 0 ? Role.ADMIN : Role.USER;
 
         User u = User.builder()
@@ -34,17 +35,35 @@ public class AuthService {
                 .email(req.getEmail())
                 .role(role)
                 .build();
+
         userRepo.save(u);
+
         String token = jwtService.generateToken(u.getUsername(), u.getRole().name());
-        return new AuthResponse(token, "Bearer", Long.parseLong(System.getProperty("jwt.expiration-minutes", "60")));
+
+        return AuthResponse.builder()
+                .accessToken(token)
+                .tokenType("Bearer")
+                .expiresInMinutes(Long.parseLong(System.getProperty("jwt.expiration-minutes", "60")))
+                .userID(u.getId())
+                .build();
     }
 
+
     public AuthResponse login(AuthRequest req) {
-        // authenticate via AuthenticationManager to let Spring check credentials
         var authToken = new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword());
-        authManager.authenticate(authToken); // will throw if bad creds
-        User u = userRepo.findByUsername(req.getUsername()).orElseThrow();
+        authManager.authenticate(authToken);
+
+        User u = userRepo.findByUsername(req.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         String token = jwtService.generateToken(u.getUsername(), u.getRole().name());
-        return new AuthResponse(token, "Bearer", Long.parseLong(System.getProperty("jwt.expiration-minutes", "60")));
+
+        return AuthResponse.builder()
+                .accessToken(token)
+                .tokenType("Bearer")
+                .expiresInMinutes(Long.parseLong(System.getProperty("jwt.expiration-minutes", "60")))
+                .userID(u.getId())
+                .build();
     }
+
 }

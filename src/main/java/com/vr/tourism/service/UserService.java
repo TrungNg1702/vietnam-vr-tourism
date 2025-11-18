@@ -35,7 +35,7 @@ public class UserService {
 
         if (user.getAvatar() != null) {
             String fileName = Paths.get(user.getAvatar()).getFileName().toString();
-            dto.setAvatar("/uploads/users/avatar/" + fileName);
+            dto.setAvatar(fileName);
         }
 
         return dto;

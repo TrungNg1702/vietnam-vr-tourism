@@ -29,20 +29,20 @@ public class SceneController {
     }
 
     @PostMapping("/upload-pano/{id}")
-    public ResponseEntity<?> uploadPanoImg(@PathVariable("id") String id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+    public ResponseEntity<?> uploadPanoImg(@PathVariable("id") Long id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
             SceneDTO sceneDTO = sceneService.uploadPanoImg(id, file);
             return ResponseEntity.ok(sceneDTO);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateScene(@RequestBody SceneDTO dto,
-                                           @PathVariable("id") String id) {
+                                           @PathVariable("id") Long id) {
             SceneDTO sceneDTO = sceneService.update(dto, id);
             return ResponseEntity.ok(sceneDTO);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable("id") String id) {
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
             SceneDTO sceneDTO = sceneService.getById(id);
             return ResponseEntity.ok(sceneDTO);
     }
@@ -54,7 +54,7 @@ public class SceneController {
     }
 
     @GetMapping("/pano/{id}")
-    public ResponseEntity<byte[]> getPanoFile(@PathVariable String id) {
+    public ResponseEntity<byte[]> getPanoFile(@PathVariable Long id) {
             return sceneService.getPanoFile(id);
     }
 
@@ -65,7 +65,7 @@ public class SceneController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteScene (@PathVariable String id) throws IOException {
+    public ResponseEntity<?> deleteScene (@PathVariable Long id) throws IOException {
             SceneDTO existingScene = sceneService.delete(id);
             return ResponseEntity.ok("Xoa thanh cong Scene co ID: " + existingScene.getId());
     }

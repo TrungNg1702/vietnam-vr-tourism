@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HotspotDTO {
-    private String id;
+    private Long id;
     private String type;
     private Double yaw;
     private Double pitch;
-    private String text;
-    private String content;
+    private String label;
+    private Long target;
 
-    private String sceneId;
+    private Long sceneId;
 }

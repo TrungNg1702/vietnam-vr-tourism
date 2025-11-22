@@ -42,7 +42,7 @@ public class SceneService {
         }
     }
 
-    public SceneDTO update(SceneDTO dto, String id) {
+    public SceneDTO update(SceneDTO dto, Long id) {
         try{
             if (dto == null) {
                 throw new RuntimeException("Gia tri nhap vao khong duoc de trong");
@@ -80,7 +80,7 @@ public class SceneService {
         return scenes.stream().map(mapper::toDTO).toList();
     }
 
-    public SceneDTO getById(String id) {
+    public SceneDTO getById(Long id) {
         Scene scene = repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Scene với ID: " + id));
 
@@ -92,7 +92,7 @@ public class SceneService {
        return repo.findAll().stream().map(mapper::toDTO).toList();
     }
 
-    public SceneDTO uploadPanoImg(String id, MultipartFile file) {
+    public SceneDTO uploadPanoImg(Long id, MultipartFile file) {
         try {
             if (file.isEmpty()) {
                 throw new IllegalArgumentException("File cannot be empty");
@@ -146,7 +146,7 @@ public class SceneService {
         }
     }
 
-    public ResponseEntity<byte[]> getPanoFile(String id) {
+    public ResponseEntity<byte[]> getPanoFile(Long id) {
         Scene scene = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Scene not found"));
 
@@ -184,7 +184,7 @@ public class SceneService {
 //        return "/uploads/scenes/pano/" + fileName;
 //    }
 
-    public SceneDTO delete(String id) throws IOException {
+    public SceneDTO delete(Long id) throws IOException {
         Scene scene = repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Khong tim thay Scene co ID: " + id));
         if (scene.getHotspots() != null) {

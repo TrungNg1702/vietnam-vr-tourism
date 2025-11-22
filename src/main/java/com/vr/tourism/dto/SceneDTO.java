@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 
 public class SceneDTO {
-    private String id;
+    private Long id;
     private String type;
     private String panoUrl;
     private String title;

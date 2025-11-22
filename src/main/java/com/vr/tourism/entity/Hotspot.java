@@ -16,15 +16,20 @@ import lombok.*;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Hotspot {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
 
     private String type;
     private Double yaw;
     private Double pitch;
-    private String text;
+    private String label;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+//    @Column(columnDefinition = "TEXT")
+//    private String content;
+
+    // Day se la SceneID
+    private Long target;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scene_id")
